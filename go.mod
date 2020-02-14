@@ -1,4 +1,4 @@
-module yyk/dist
+module code.skysarms.com/yyk/dist
 
 go 1.13
 
