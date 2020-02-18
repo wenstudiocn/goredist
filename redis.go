@@ -25,7 +25,7 @@ func ConnectRedis(addrs []string, password string, db int32) (*redis.Client, err
 	conn := redis.NewClient(&redis.Options{
 		Addr:         rds_addr,
 		Password:     password,
-		DB:           db,
+		DB:           int(db),
 		DialTimeout:  3 * time.Second,
 		ReadTimeout:  3 * time.Second,
 		WriteTimeout: 5 * time.Second,
