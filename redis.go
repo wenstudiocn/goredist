@@ -13,7 +13,7 @@ var (
 
 // @data: redis 连接参数 json，来自 zookeeper
 // @conf
-func ConnectRedis(addrs []string, password string, db int) (*redis.Client, error) {
+func ConnectRedis(addrs []string, password string, db int32) (*redis.Client, error) {
 	// 连接 redis
 	//TODO update to cluster version
 	rds_addr_len := len(addrs)

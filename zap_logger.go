@@ -9,6 +9,16 @@ import (
 
 var (
 	defaultLog *SLogger
+
+	LogLevelMap = map[int]zapcore.Level{
+		1: zapcore.DebugLevel,
+		2: zapcore.InfoLevel,
+		3: zapcore.WarnLevel,
+		4: zapcore.ErrorLevel,
+		5: zapcore.DPanicLevel,
+		6: zapcore.PanicLevel,
+		7: zapcore.FatalLevel,
+	}
 )
 
 /// signle logger
