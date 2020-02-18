@@ -17,11 +17,10 @@ func TestLogicID(t *testing.T) {
 	t.Logf("%v.%v.%v.%v", s.funcId, s.cataId, s.subId, s.instId)
 
 	s, err = NewLogicIDByID(1000010203)
-	if err == nil {
-		t.Error("error:", err)
+	if err != nil {
+		t.Log("error:", err)
 	}
 	if s != nil {
 		t.Error("error2")
 	}
-
 }
