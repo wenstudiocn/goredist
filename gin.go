@@ -70,9 +70,6 @@ func flow_control() gin.HandlerFunc {
 
 func (self *HttpGin) Start() error {
 	router := gin.Default()
-	for path, cb := range self.routes {
-		router.POST(path, cb)
-	}
 
 	if self.enableDebug {
 		gin.SetMode(gin.DebugMode)
@@ -92,6 +89,11 @@ func (self *HttpGin) Start() error {
 		Addr: self.addr,
 		Handler: router,
 	}
+
+	for path, cb := range self.routes {
+		router.POST(path, cb)
+	}
+
 	go func(){
 		if err := self.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			panic(err)
