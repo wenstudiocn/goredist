@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 )
 /// 进程通用设置解析
@@ -22,6 +23,8 @@ type AppInfo struct {
 	Ev *Eventbus			// 事件总线
 	Mq *Mq						// 消息队列
 	Zk *ZkClient				// zookeeper
+	Debug bool
+	Mode string
 
 	enableLogger bool
 	logLevel int32
@@ -45,14 +48,19 @@ func AppEnableLogger(enable bool, logLevel int32, logPath string, logStdout bool
 	}
 }
 
-func NewAppInfo(programeName string, major, minor, revision int, id uint64, confFile string) *AppInfo {
+func NewAppInfo(programeName string, major, minor, revision int, id uint64, confFile string, mode string) *AppInfo {
 	ai := &AppInfo{}
 	ai.Name = programeName
 	ai.Ver = NewVersion(major, minor, revision)
 	ai.InstName = ai.Name + "-" + strconv.FormatUint(id, 10)
 	ai.BootAt = time.Now()
 	ai.ConfFile = confFile
+	ai.Mode = mode
+	ai.Debug = true
 
+	if strings.ToLower(ai.Mode) == "release" {
+		ai.Debug = false
+	}
 	return ai
 }
 
