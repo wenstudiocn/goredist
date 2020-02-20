@@ -25,6 +25,8 @@ type AppInfo struct {
 	Zk *ZkClient				// zookeeper
 	Debug bool
 	Mode string
+	Offline int32 				// 是否下线 0 不下线
+	ChQuit chan struct{} 	// 进程退出
 
 	enableLogger bool
 	logLevel int32
@@ -57,6 +59,7 @@ func NewAppInfo(programeName string, major, minor, revision int, id uint64, conf
 	ai.ConfFile = confFile
 	ai.Mode = mode
 	ai.Debug = true
+	ai.ChQuit = make(chan struct{})
 
 	if strings.ToLower(ai.Mode) == "release" {
 		ai.Debug = false
