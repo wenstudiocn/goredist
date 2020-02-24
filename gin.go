@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -12,15 +13,43 @@ import (
 /**
 TODO: 流控，debug，cors，(自动)黑名单
  */
+func http_flow_control_middleware() gin.HandlerFunc {
+	return func(c *gin.Context){
+
+	}
+}
+
+func http_blacklist_middleware(bl map[string]bool) gin.HandlerFunc {
+	return func(c *gin.Context){
+		ip := c.ClientIP()
+		if _, ok := bl[ip]; ok {
+			c.AbortWithStatus(http.StatusProxyAuthRequired)
+		}
+	}
+}
+
+func http_whitelist_middleware(wl map[string]bool) gin.HandlerFunc {
+	return func(c *gin.Context){
+		ip := c.ClientIP()
+		if _, ok := wl[ip]; !ok {
+			c.AbortWithStatus(http.StatusProxyAuthRequired)
+		}
+	}
+}
 
 type HttpGin struct {
 	addr string
 	routes map[string]func(*gin.Context)
 	server *http.Server
+
 	enableCors bool
 	enableDebug bool
 	enableFlowControl bool
-	blacklist []string
+	enableSession bool
+	sessionStore sessions.Store
+
+	blacklist map[string]bool
+	whitelist map[string]bool
 }
 
 type HttpGinOptions func(*HttpGin)
@@ -43,9 +72,26 @@ func EnableFlowControl(enable bool) HttpGinOptions {
 	}
 }
 
-func WithBlacklist(b []string) HttpGinOptions {
+func EnableSession(enable bool, store sessions.Store) HttpGinOptions {
 	return func(h *HttpGin) {
-		h.blacklist = b
+		h.enableSession = enable
+		h.sessionStore = store
+	}
+}
+
+func EnableBlacklist(b []string) HttpGinOptions {
+	return func(h *HttpGin) {
+		for _, ip := range b {
+			h.blacklist[ip] = true
+		}
+	}
+}
+
+func EnableWhitelist(b []string) HttpGinOptions {
+	return func(h *HttpGin) {
+		for _, ip := range b {
+			h.whitelist[ip] = true
+		}
 	}
 }
 
@@ -53,6 +99,8 @@ func NewHttpGinServer(addr string, routes map[string]func(*gin.Context), options
 	gin := &HttpGin{
 		addr: addr,
 		routes: routes,
+		blacklist: make(map[string]bool),
+		whitelist: make(map[string]bool),
 	}
 
 	for _, opt := range options {
@@ -60,12 +108,6 @@ func NewHttpGinServer(addr string, routes map[string]func(*gin.Context), options
 	}
 
 	return gin
-}
-
-func flow_control() gin.HandlerFunc {
-	return func(c *gin.Context){
-
-	}
 }
 
 func (self *HttpGin) Start() error {
@@ -80,10 +122,20 @@ func (self *HttpGin) Start() error {
 	if self.enableCors {
 		router.Use(cors.Default())
 	}
+	if self.enableSession {
+		router.Use(sessions.Sessions("default", self.sessionStore))
+	}
 
 	if self.enableFlowControl {
-		router.Use(flow_control())
+		router.Use(http_flow_control_middleware())
 	}
+	if len(self.blacklist) > 0 {
+		router.Use(http_blacklist_middleware(self.blacklist))
+	}
+	if len(self.whitelist) > 0 {
+		router.Use(http_whitelist_middleware(self.whitelist))
+	}
+
 
 	self.server = &http.Server{
 		Addr: self.addr,
