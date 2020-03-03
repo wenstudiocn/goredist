@@ -85,3 +85,27 @@ func (self *LogicID) HeaderSub() uint64 {
 func (self *LogicID) Id() uint64 {
 	return self.id
 }
+
+func GetFuncIdByLogicId(logicId uint64) (uint64, error) {
+	lgc, err := NewLogicIDByID(logicId)
+	if err != nil {
+		return 0, err
+	}
+	return lgc.FuncId(), nil
+}
+
+func GetCataIdByLogicId(logicId uint64) (uint64, error) {
+	lgc, err := NewLogicIDByID(logicId)
+	if err != nil {
+		return 0, err
+	}
+	return lgc.CataId(), nil
+}
+
+func GetSubIdByLogicId(logicId uint64) (uint64, error) {
+	lgc, err := NewLogicIDByID(logicId)
+	if err != nil {
+		return 0, err
+	}
+	return lgc.FuncId(), nil
+}

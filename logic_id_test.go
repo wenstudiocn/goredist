@@ -1,7 +1,7 @@
 package dist
 
 import (
-"testing"
+	"testing"
 )
 
 func TestLogicID(t *testing.T) {
