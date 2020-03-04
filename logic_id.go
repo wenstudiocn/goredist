@@ -12,7 +12,20 @@ const (
 	LI_MAX_ID     = 100
 )
 
-// 设计规则参看 kingame 的 README
+/* 设计规则
+每个逻辑服务器都有一个ID,叫 logicId,对应一个逻辑服务器"实例"
+logicId = funcId(1-999) + cataId(1-99) + subId(1-99) + instId(1-99)
+其中 funcId 代表一个逻辑功能 比如斗地主游戏
+cataId 代表一个分类,比如中级场
+subId 子分类, 比如癞子
+instId 实例, 比如癞子斗地主中级场启动了 2 个实例用于负载均衡,可能 instId 分别对应1,2
+gameId 对应一个游戏,忽略 instId 由其他部分组成
+
+实例:
+1 斗地主, 1 初级场  1 普通斗地主  两个实例分别为 1, 2
+则这两个进程的ID 分别为 1010101, 1010102
+gameId 都为 1010100
+*/
 var (
 	ErrInvalidLogicId = errors.New("Invalid logic id")
 )
@@ -74,6 +87,10 @@ func (self *LogicID) InstId() uint64 {
 	return self.instId
 }
 
+func (self *LogicID) GameId() uint64 {
+	return self.id % LI_MAX_ID
+}
+
 func (self *LogicID) HeaderCata() uint64 {
 	return self.funcId*LI_FUNC_MULTI + self.cataId*LI_CATA_MULTI
 }
@@ -86,6 +103,7 @@ func (self *LogicID) Id() uint64 {
 	return self.id
 }
 
+// sugar functions
 func GetFuncIdByLogicId(logicId uint64) (uint64, error) {
 	lgc, err := NewLogicIDByID(logicId)
 	if err != nil {
@@ -108,4 +126,12 @@ func GetSubIdByLogicId(logicId uint64) (uint64, error) {
 		return 0, err
 	}
 	return lgc.FuncId(), nil
+}
+
+func GetGameIdByLogicId(logicId uint64) (uint64, error) {
+	lgc, err := NewLogicIDByID(logicId)
+	if err != nil {
+		return 0, err
+	}
+	return lgc.GameId(), nil
 }
