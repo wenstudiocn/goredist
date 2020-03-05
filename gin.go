@@ -49,6 +49,9 @@ type HttpGin struct {
 	enableSession     bool
 	sessionStore      sessions.Store
 
+	enableHTML bool
+	htmlPtn    string
+
 	blacklist map[string]bool
 	whitelist map[string]bool
 }
@@ -77,6 +80,13 @@ func EnableSession(enable bool, store sessions.Store) HttpGinOptions {
 	return func(h *HttpGin) {
 		h.enableSession = enable
 		h.sessionStore = store
+	}
+}
+
+func EnableHTML(enable bool, ptn string) HttpGinOptions {
+	return func(h *HttpGin) {
+		h.enableHTML = enable
+		h.htmlPtn = ptn
 	}
 }
 
@@ -130,11 +140,17 @@ func (self *HttpGin) Start() error {
 	if self.enableFlowControl {
 		router.Use(http_flow_control_middleware())
 	}
+
 	if len(self.blacklist) > 0 {
 		router.Use(http_blacklist_middleware(self.blacklist))
 	}
+
 	if len(self.whitelist) > 0 {
 		router.Use(http_whitelist_middleware(self.whitelist))
+	}
+
+	if self.enableHTML {
+		router.LoadHTMLGlob(self.htmlPtn)
 	}
 
 	self.server = &http.Server{
