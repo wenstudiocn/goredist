@@ -3,24 +3,25 @@ package dist
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
 )
 
 /**
 TODO: 流控，debug，cors，(自动)黑名单
- */
+*/
 func http_flow_control_middleware() gin.HandlerFunc {
-	return func(c *gin.Context){
+	return func(c *gin.Context) {
 
 	}
 }
 
 func http_blacklist_middleware(bl map[string]bool) gin.HandlerFunc {
-	return func(c *gin.Context){
+	return func(c *gin.Context) {
 		ip := c.ClientIP()
 		if _, ok := bl[ip]; ok {
 			c.AbortWithStatus(http.StatusProxyAuthRequired)
@@ -29,7 +30,7 @@ func http_blacklist_middleware(bl map[string]bool) gin.HandlerFunc {
 }
 
 func http_whitelist_middleware(wl map[string]bool) gin.HandlerFunc {
-	return func(c *gin.Context){
+	return func(c *gin.Context) {
 		ip := c.ClientIP()
 		if _, ok := wl[ip]; !ok {
 			c.AbortWithStatus(http.StatusProxyAuthRequired)
@@ -38,15 +39,15 @@ func http_whitelist_middleware(wl map[string]bool) gin.HandlerFunc {
 }
 
 type HttpGin struct {
-	addr string
-	routes map[string]func(*gin.Context)
+	addr   string
+	routes []map[string]func(*gin.Context)
 	server *http.Server
 
-	enableCors bool
-	enableDebug bool
+	enableCors        bool
+	enableDebug       bool
 	enableFlowControl bool
-	enableSession bool
-	sessionStore sessions.Store
+	enableSession     bool
+	sessionStore      sessions.Store
 
 	blacklist map[string]bool
 	whitelist map[string]bool
@@ -95,10 +96,10 @@ func EnableWhitelist(b []string) HttpGinOptions {
 	}
 }
 
-func NewHttpGinServer(addr string, routes map[string]func(*gin.Context), options ...HttpGinOptions) *HttpGin {
+func NewHttpGinServer(addr string, routes []map[string]func(*gin.Context), options ...HttpGinOptions) *HttpGin {
 	gin := &HttpGin{
-		addr: addr,
-		routes: routes,
+		addr:      addr,
+		routes:    routes,
 		blacklist: make(map[string]bool),
 		whitelist: make(map[string]bool),
 	}
@@ -115,7 +116,7 @@ func (self *HttpGin) Start() error {
 
 	if self.enableDebug {
 		gin.SetMode(gin.DebugMode)
-	}else{
+	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -136,17 +137,33 @@ func (self *HttpGin) Start() error {
 		router.Use(http_whitelist_middleware(self.whitelist))
 	}
 
-
 	self.server = &http.Server{
-		Addr: self.addr,
+		Addr:    self.addr,
 		Handler: router,
 	}
 
-	for path, cb := range self.routes {
-		router.POST(path, cb)
+	if len(self.routes) > 0 {
+		for path, cb := range self.routes[0] {
+			router.POST(path, cb)
+		}
+	}
+	if len(self.routes) > 1 {
+		for path, cb := range self.routes[1] {
+			router.GET(path, cb)
+		}
+	}
+	if len(self.routes) > 2 {
+		for path, cb := range self.routes[2] {
+			router.PUT(path, cb)
+		}
+	}
+	if len(self.routes) > 3 {
+		for path, cb := range self.routes[3] {
+			router.DELETE(path, cb)
+		}
 	}
 
-	go func(){
+	go func() {
 		if err := self.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			panic(err)
 		}
@@ -155,7 +172,7 @@ func (self *HttpGin) Start() error {
 }
 
 func (self *HttpGin) Stop() error {
-	ctx, canceller := context.WithTimeout(context.Background(), 5 * time.Second)
+	ctx, canceller := context.WithTimeout(context.Background(), 5*time.Second)
 	defer canceller()
 
 	if err := self.server.Shutdown(ctx); err != nil {
