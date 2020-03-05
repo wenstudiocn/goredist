@@ -2,6 +2,7 @@ package dist
 
 import (
 	"fmt"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -15,7 +16,7 @@ import (
 //	Subject   string `json:"sub,omitempty"`
 //}
 
-type JwtTokener struct{
+type JwtTokener struct {
 	key string
 }
 
@@ -39,8 +40,8 @@ func (self *JwtTokener) Token(m map[string]interface{}) (string, error) {
 	return token, nil
 }
 
-func (self *JwtTokener)Parse(token string) (interface{}, error) {
-	tk, err := jwt.Parse(token, func(token *jwt.Token)(interface{}, error){
+func (self *JwtTokener) Parse(token string) (jwt.MapClaims, error) {
+	tk, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(self.key), nil
 	})
 	if nil != err {

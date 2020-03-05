@@ -20,5 +20,6 @@ func TestTokener(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	t.Log(r)
+	t.Log(r["username"].(string))
+	t.Log(r["password"])
 }
