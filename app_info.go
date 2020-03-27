@@ -2,6 +2,7 @@ package dist
 
 import (
 	"github.com/go-redis/redis"
+	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
@@ -87,4 +88,18 @@ func (self *AppInfo)EnableLog(console bool, level int32, logPath string) error {
 	SetDefaultLogger(self.Log)
 
 	return nil
+}
+
+// add a node to zookeeper
+func (self *AppInfo) RegisterSelf(parentPath string) error {
+	node := parentPath + "/" + self.InstName
+	fh, err := os.Open(self.ConfFile)
+	if err != nil {
+		return err
+	}
+	data ,err := ioutil.ReadAll(fh)
+	if err != nil {
+		return err
+	}
+	return self.Zk.CreateEmpNode(node, data)
 }
