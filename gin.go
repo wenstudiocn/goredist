@@ -40,7 +40,6 @@ func http_whitelist_middleware(wl map[string]bool) gin.HandlerFunc {
 
 type HttpGin struct {
 	addr   string
-	routes []map[string]func(*gin.Context)
 	server *http.Server
 
 	enableCors        bool
@@ -106,22 +105,21 @@ func EnableWhitelist(b []string) HttpGinOptions {
 	}
 }
 
-func NewHttpGinServer(addr string, routes []map[string]func(*gin.Context), options ...HttpGinOptions) *HttpGin {
-	gin := &HttpGin{
+func NewHttpGinServer(addr string, options ...HttpGinOptions) *HttpGin {
+	hg := &HttpGin{
 		addr:      addr,
-		routes:    routes,
 		blacklist: make(map[string]bool),
 		whitelist: make(map[string]bool),
 	}
 
 	for _, opt := range options {
-		opt(gin)
+		opt(hg)
 	}
 
-	return gin
+	return hg
 }
 
-func (self *HttpGin) Start() error {
+func (self *HttpGin) Start(fnSetupRouter func(*gin.Engine)) error {
 	router := gin.Default()
 
 	if self.enableDebug {
@@ -157,27 +155,7 @@ func (self *HttpGin) Start() error {
 		Addr:    self.addr,
 		Handler: router,
 	}
-
-	if len(self.routes) > 0 {
-		for path, cb := range self.routes[0] {
-			router.POST(path, cb)
-		}
-	}
-	if len(self.routes) > 1 {
-		for path, cb := range self.routes[1] {
-			router.GET(path, cb)
-		}
-	}
-	if len(self.routes) > 2 {
-		for path, cb := range self.routes[2] {
-			router.PUT(path, cb)
-		}
-	}
-	if len(self.routes) > 3 {
-		for path, cb := range self.routes[3] {
-			router.DELETE(path, cb)
-		}
-	}
+	fnSetupRouter(router)
 
 	go func() {
 		if err := self.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
