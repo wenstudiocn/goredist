@@ -1,6 +1,8 @@
 package dist
 
 import (
+	"code.skysarms.com/yyk/go-app-dist/log"
+	"code.skysarms.com/yyk/go-app-dist/mq"
 	"github.com/go-redis/redis"
 	"io/ioutil"
 	"os"
@@ -14,16 +16,16 @@ import (
 
 // 一个程序的基本信息
 type AppInfo struct {
-	Name string				// 程序名，和文件名无关，编译时指定
-	InstName string		// 进程实例名称
-	BootAt time.Time	// 启动时间
-	Ver *Version				// 版本号
-	ConfFile string			// 配置文件名
-	Log *SLogger			// 日志对象
-	Rdb *redis.Client		// redis 客户端
-	Ev *Eventbus			// 事件总线
-	Mq *Mq						// 消息队列
-	Zk *ZkClient				// zookeeper
+	Name string       // 程序名，和文件名无关，编译时指定
+	InstName string   // 进程实例名称
+	BootAt time.Time  // 启动时间
+	Ver *Version      // 版本号
+	ConfFile string   // 配置文件名
+	Log *log.SLogger  // 日志对象
+	Rdb *redis.Client // redis 客户端
+	Ev *mq.Eventbus   // 事件总线
+	Mq *mq.Mq         // 消息队列
+	Zk *ZkClient      // zookeeper
 	Debug bool
 	Mode string
 	Offline int32 				// 是否下线 0 不下线
@@ -70,7 +72,7 @@ func NewAppInfo(programeName string, major, minor, revision int, id uint64, conf
 
 func (self *AppInfo)EnableLog(console bool, level int32, logPath string) error {
 	// level
-	lv, ok := LogLevelMap[int(level)]
+	lv, ok := log.LogLevelMap[int(level)]
 	if !ok {
 		return ErrInvalidParams
 	}
@@ -84,8 +86,8 @@ func (self *AppInfo)EnableLog(console bool, level int32, logPath string) error {
 		f = path.Join(logPath, f)
 	}
 	// logger
-	self.Log = NewSLogger(console, f, lv)
-	SetDefaultLogger(self.Log)
+	self.Log = log.NewSLogger(console, f, lv)
+	log.SetDefaultLogger(self.Log)
 
 	return nil
 }

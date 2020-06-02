@@ -1,4 +1,4 @@
-package dist
+package mq
 
 import (
 	"errors"

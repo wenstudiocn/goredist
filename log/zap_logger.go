@@ -1,10 +1,18 @@
-package dist
+package log
 
 import (
+	"code.skysarms.com/yyk/go-app-dist/utils"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"path"
+)
+
+const (
+	DEF_LOG_FILENAME = "log.log"
+	DEF_LOG_PATH     = "./"
+	DEF_LOG_LEVEL    = 1
 )
 
 var (
@@ -38,9 +46,27 @@ type SLogger struct {
 // @path: 路径
 // @level: 日志等级
 // @sinks: 日志额外的输出
-func NewSLogger(console bool, path string, level zapcore.Level, sinks ...zap.Sink) *SLogger {
+func NewSLogger(console bool, logfile string, level zapcore.Level, sinks ...zap.Sink) *SLogger {
+	//修正参数
+	// log file
+	dir, filename := path.Split(logfile)
+	if dir == "" {
+		dir = DEF_LOG_PATH
+	}
+	if filename == "" {
+		filename = DEF_LOG_FILENAME
+	}
+	err := utils.EnsurePath(dir)
+	if err != nil {
+		return nil
+	}
+	fullpath := path.Join(dir, filename)
+	// log level
+	if level < 1 || level > 7 {
+		level = DEF_LOG_LEVEL
+	}
 	settings := lumberjack.Logger{
-		Filename:   path,
+		Filename:   fullpath,
 		MaxSize:    10,
 		MaxAge:     30,
 		MaxBackups: 360,
@@ -83,7 +109,7 @@ func NewSLogger(console bool, path string, level zapcore.Level, sinks ...zap.Sin
 	logger := zap.New(core, caller, callerSkip, dev, stack)
 
 	return &SLogger{
-		f:  path,
+		f:  fullpath,
 		lg: logger,
 	}
 }

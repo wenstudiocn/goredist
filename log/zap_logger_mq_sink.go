@@ -1,14 +1,18 @@
-package dist
+package log
+
+import (
+	"code.skysarms.com/yyk/go-app-dist/mq"
+)
 
 /// zap logger sinker
 /// write msg to mq
 
 type MqSink struct {
 	name string
-	mq   *Mq
+	mq   *mq.Mq
 }
 
-func NewMqSink(name string, mq *Mq) *MqSink {
+func NewMqSink(name string, mq *mq.Mq) *MqSink {
 	return &MqSink{
 		name: name,
 		mq:   mq,
