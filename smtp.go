@@ -3,6 +3,7 @@ package dist
 import (
 	"github.com/go-gomail/gomail"
 )
+
 type Mailer struct {
 	smtpServer string
 	smtpPort int
@@ -17,7 +18,6 @@ type Mail struct {
 }
 
 type MailReceiver struct {
-	Mail Mail
 	Name string
 	Addr string
 }
@@ -31,7 +31,7 @@ func NewMailer(smtp string, port int, username, password string) *Mailer {
 	}
 }
 
-func (self *Mailer) Send(receivers ...MailReceiver) error {
+func (self *Mailer) Send(mail Mail, receivers ...MailReceiver) error {
 	dailer := gomail.NewDialer(self.smtpServer, self.smtpPort, self.username, self.password)
 	sender, err := dailer.Dial()
 	if err != nil {
@@ -42,9 +42,9 @@ func (self *Mailer) Send(receivers ...MailReceiver) error {
 	for _, receiver := range receivers {
 		msg.SetHeader("From", self.username)
 		msg.SetAddressHeader("To", receiver.Addr, receiver.Name)
-		msg.SetHeader("Subject", receiver.Mail.Subject)
-		msg.SetBody("text/html", receiver.Mail.Body)
-		for _, file := range receiver.Mail.Attachments {
+		msg.SetHeader("Subject", mail.Subject)
+		msg.SetBody("text/html", mail.Body)
+		for _, file := range mail.Attachments {
 			msg.Attach(file)
 		}
 		err = gomail.Send(sender, msg)
