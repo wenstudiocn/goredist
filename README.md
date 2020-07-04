@@ -1,6 +1,6 @@
 # goredist
 
-go library tools for development
+go libraries redistros for quick development. its still in progress.
 
 ## libraries
 
@@ -12,3 +12,8 @@ go library tools for development
 - database(gorm)
 - gin
 - jwt
+- sms
+- email(smtp)
+- go error string
+- version
+- and more...
