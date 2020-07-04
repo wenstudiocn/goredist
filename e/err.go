@@ -6,7 +6,7 @@ import (
 
 var (
 	ErrKeyNotExists        = errors.New("key of map is not exists")
-	ErrBlank               = errors.New("blank slice or array")
+	ErrEmpty               = errors.New("empty slice or array")
 	ErrOutOfRange          = errors.New("index out of range")
 	ErrExists              = errors.New("target exists")
 	ErrNotExists           = errors.New("target not exists")
