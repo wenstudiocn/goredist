@@ -30,11 +30,11 @@ Backup MySQL table rows into json file
 func BackupTable(tableName string, v interface{}, db *gorm.DB, savePath string, version string) error {
 	value := reflect.ValueOf(v)
 	if value.Type().Kind() != reflect.Ptr {
-		return e.ErrParameters
+		return e.ErrParams
 	}
 	rvalue := value.Elem()
 	if rvalue.Kind() != reflect.Slice {
-		return e.ErrParameters
+		return e.ErrParams
 	}
 	// file
 	filename := path.Join(savePath, fmt.Sprintf("%s.%s.json", tableName, version))
