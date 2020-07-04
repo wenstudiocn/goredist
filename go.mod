@@ -1,4 +1,4 @@
-module code.skysarms.com/yyk/go-app-dist
+module git.us/yyk/go-dist
 
 go 1.13
 
