@@ -1,7 +1,7 @@
 package log
 
 import (
-	"code.skysarms.com/yyk/go-app-dist/utils"
+	"github.com/wenstudiocn/goredist/utils"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

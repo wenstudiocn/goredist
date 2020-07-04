@@ -1,3 +1,5 @@
+code.skysarms.com/yyk/go-app-dist v0.5.11 h1:mrIt+QmRvGktxaqRB1H49IxSvxTc9TtbjC1Ub05y6GE=
+code.skysarms.com/yyk/go-app-dist v0.5.11/go.mod h1:8rHy38WNEH86CNRL7Ot/s2D7OhGunCVvg01ENvZVce4=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Knetic/govaluate v3.0.0+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/OwnLocal/goes v1.0.0/go.mod h1:8rIFjBGTue3lCU0wplczcUgt9Gxgrkkrw7etMIcn8TM=

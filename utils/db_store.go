@@ -2,7 +2,7 @@ package utils
 
 import (
 	"bufio"
-	"code.skysarms.com/yyk/go-app-dist/e"
+	"github.com/wenstudiocn/goredist/e"
 	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"

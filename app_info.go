@@ -1,8 +1,8 @@
 package dist
 
 import (
-	"code.skysarms.com/yyk/go-app-dist/log"
-	"code.skysarms.com/yyk/go-app-dist/mq"
+	"github.com/wenstudiocn/goredist/log"
+	"github.com/wenstudiocn/goredist/mq"
 	"github.com/go-redis/redis"
 	"io/ioutil"
 	"os"

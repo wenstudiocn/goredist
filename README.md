@@ -1,4 +1,4 @@
-# go-app-dist
+# goredist
 
 go library tools for development
 

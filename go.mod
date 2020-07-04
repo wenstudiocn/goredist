@@ -1,4 +1,4 @@
-module git.us/yyk/godist
+module github.com/wenstudiocn/goredist
 
 go 1.13
 

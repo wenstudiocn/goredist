@@ -1,7 +1,7 @@
 package log
 
 import (
-	"code.skysarms.com/yyk/go-app-dist/mq"
+	"github.com/wenstudiocn/goredist/mq"
 )
 
 /// zap logger sinker
