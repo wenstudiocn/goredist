@@ -1,4 +1,4 @@
-module git.us/yyk/go-dist
+module git.us/yyk/godist
 
 go 1.13
 
