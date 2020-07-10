@@ -6,7 +6,9 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"github.com/wenstudiocn/goredist/e"
 	"os"
+	"strings"
 	"unsafe"
 )
 
@@ -71,4 +73,12 @@ func EnsurePath(path string) error {
 		}
 	}
 	return nil
+}
+// parse name from an email address
+func GetNameFromEmail(email string) (string, error) {
+	if ValidEmail(email) {
+		parts := strings.Split(email, "@")
+		return parts[0], nil
+	}
+	return email, e.ErrParams
 }

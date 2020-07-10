@@ -15,3 +15,8 @@ func ValidPhoneCNSimple(phone string) bool {
 	reg := regexp.MustCompile(pattern)
 	return reg.MatchString(phone)
 }
+
+func ValidEmail(email string) bool {
+	// TODO implement
+	return true
+}

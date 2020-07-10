@@ -42,7 +42,8 @@ func RandNumAlphaString(length int) string {
 	return str
 }
 
-func DigitCaptchaGen() (string, string, error) {
+func DigitCaptchaGen(length int) (string, string, error) {
+	captcha_digit_driver.Length = length
 	return captchaDigit.Generate()
 }
 
