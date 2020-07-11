@@ -1,0 +1,3 @@
+[submodule "smsgo"]
+	path = smsgo
+	url = https://github.com/wenstudiocn/smsgo
