@@ -46,7 +46,7 @@ type SLogger struct {
 // @path: 路径
 // @level: 日志等级
 // @sinks: 日志额外的输出
-func NewSLogger(console bool, logfile string, level zapcore.Level, sinks ...zap.Sink) *SLogger {
+func NewSLogger(console bool, logfile string, level int, sinks ...zap.Sink) *SLogger {
 	//修正参数
 	// log file
 	dir, filename := path.Split(logfile)
@@ -87,7 +87,7 @@ func NewSLogger(console bool, logfile string, level zapcore.Level, sinks ...zap.
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 	// level
-	atom := zap.NewAtomicLevelAt(level)
+	atom := zap.NewAtomicLevelAt(zapcore.Level(level))
 	wss := []zapcore.WriteSyncer{zapcore.AddSync(&settings)}
 	if console {
 		wss = append(wss, zapcore.AddSync(os.Stdout))
