@@ -10,6 +10,8 @@ var (
 	ErrOutOfRange          = errors.New("index out of range")
 	ErrExists              = errors.New("target exists")
 	ErrNotExists           = errors.New("target not exists")
+	ErrConfig              = errors.New("config file error")
+	ErrUnsupported         = errors.New("functions or parameters unsupported")
 	ErrClosed              = errors.New("handle have been closed")
 	ErrCantConnect         = errors.New("can not connect to destination")
 	ErrImplemented         = errors.New("have not implemented")
